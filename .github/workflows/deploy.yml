@@ -39,12 +39,13 @@ jobs:
           # Detén el servicio actual
           sudo systemctl stop ecommercedenti.service || true
 
-          # Actualiza la imagen desde Docker Hub
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
-
           # Elimina el contenedor anterior (si existe)
           docker stop ecommercedenti || true
           docker rm  ecommercedenti || true
+          docker rmi -f $(docker images -q)
+
+          # Actualiza la imagen desde Docker Hub
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
 
           # Inicia el servicio con la nueva imagen
           docker run -d --name ecommercedenti -p 3000:3000 stalinvasco2024/ecommercedenti:latest
