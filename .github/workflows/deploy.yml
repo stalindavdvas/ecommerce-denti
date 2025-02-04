@@ -36,10 +36,16 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
+          # Detén el servicio actual
+          sudo systemctl stop ecommercedenti.service || true
+
+          # Actualiza la imagen desde Docker Hub
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
-          sudo systemctl stop ecommercedenti.service
+
+          # Elimina el contenedor anterior (si existe)
           docker stop ecommercedenti || true
           docker rm ecommercedenti || true
-          docker run -d --name ecommercedenti -p 3000:3000 ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
+
+          # Inicia el servicio con la nueva imagen
           sudo systemctl start ecommercedenti.service
           
