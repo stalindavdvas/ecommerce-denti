@@ -44,8 +44,8 @@ jobs:
 
           # Elimina el contenedor anterior (si existe)
           docker stop ecommercedenti || true
-          docker rm -f ecommercedenti || true
+          docker rm  ecommercedenti || true
 
           # Inicia el servicio con la nueva imagen
-          sudo systemctl start ecommercedenti.service
+          docker run -d --name ecommercedenti -p 3000:3000 stalinvasco2024/ecommercedenti:latest
           
