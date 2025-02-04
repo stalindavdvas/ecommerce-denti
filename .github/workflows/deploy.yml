@@ -37,7 +37,9 @@ jobs:
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
           docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
+          sudo systemctl stop ecommercedenti.service
           docker stop ecommercedenti || true
           docker rm ecommercedenti || true
           docker run -d --name ecommercedenti -p 3000:3000 ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
+          sudo systemctl start ecommercedenti.service
           
