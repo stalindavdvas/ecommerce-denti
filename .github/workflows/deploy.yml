@@ -27,7 +27,7 @@ jobs:
       with:
         context: .
         push: true
-        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ecommerce-denti:latest
+        tags: ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
 
     - name: Deploy to EC2
       uses: appleboy/ssh-action@master
@@ -36,8 +36,8 @@ jobs:
         username: ${{ secrets.EC2_USERNAME }}
         key: ${{ secrets.EC2_SSH_KEY }}
         script: |
-          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/ecommerce-denti:latest
-          docker stop stalinvasco2024/ecommerce-denti:latest || true
-          docker rm stalinvasco2024/ecommerce-denti:latest || true
-          docker run -d --name stalinvasco2024/ecommerce-denti:latest -p 3000:3000 ${{ secrets.DOCKER_HUB_USERNAME }}/ecommerce-denti:latest
+          docker pull ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
+          docker stop ecommercedenti || true
+          docker rm ecommercedenti || true
+          docker run -d --name ecommercedenti -p 3000:3000 ${{ secrets.DOCKER_HUB_USERNAME }}/ecommercedenti:latest
           
