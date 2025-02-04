@@ -3,13 +3,10 @@ export default function ProductCard({ product }) {
         <div className="bg-white rounded-lg shadow-md p-4">
             {/* Image product */}
             <img
-                src={product.image_url || "https://via.placeholder.com/150"} // Fallback if URL is not find.
-                alt={product.name}
-                onError={(e) => {
-                    e.target.src = "https://via.placeholder.com/150"; // Image backup
-                }}
-                className="w-full h-48 object-cover rounded-md mb-4"
-            />
+        src={product.image_url} // Usa la URL de la imagen
+        alt={product.name}
+        className="w-full h-48 object-cover rounded-md mb-4"
+      />
             {/* Name product */}
             <h3 className="text-lg font-semibold">{product.name}</h3>
             {/* Description product */}
