@@ -3,7 +3,7 @@ name: Deploy to EC2 frontEnd
 on:
   push:
     branches:
-      - main
+      - test
 
 jobs:
   build-and-deploy:
