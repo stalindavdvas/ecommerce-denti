@@ -16,7 +16,7 @@ export default function Header() {
   useEffect(() => {
     const fetchCartItemCount = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.CART_COUNT); // Endpoint para obtener el conteo del carrito
+        const response = await axios.get(API_ENDPOINTS.GETCOUNTCART); // Endpoint para obtener el conteo del carrito
         setCartItemCount(response.data.count || 0);
       } catch (error) {
         console.error("Error al cargar el contador del carrito:", error);
