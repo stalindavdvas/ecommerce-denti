@@ -1,8 +1,11 @@
+// src/components/Header.jsx
 "use client";
 import Link from "next/link";
 import { getCurrentUser, logout } from "../utils/auth";
 import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
+import axios from "axios";
+import API_ENDPOINTS from "../config/apiEndpoints";
 
 export default function Header() {
   const user = getCurrentUser(); // Obtiene los datos del usuario
@@ -13,10 +16,8 @@ export default function Header() {
   useEffect(() => {
     const fetchCartItemCount = async () => {
       try {
-        // Aquí deberías hacer una llamada a tu API para obtener la cantidad de productos en el carrito
-        const response = await fetch("/api/cart/count"); // Endpoint ficticio
-        const data = await response.json();
-        setCartItemCount(data.count || 0);
+        const response = await axios.get(API_ENDPOINTS.CART_COUNT); // Endpoint para obtener el conteo del carrito
+        setCartItemCount(response.data.count || 0);
       } catch (error) {
         console.error("Error al cargar el contador del carrito:", error);
       }

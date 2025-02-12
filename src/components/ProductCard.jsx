@@ -3,8 +3,11 @@
 import Link from "next/link";
 import axios from "axios";
 import API_ENDPOINTS from "../config/apiEndpoints";
+import { useState } from "react";
 
 export default function ProductCard({ product }) {
+  const [message, setMessage] = useState(""); // Estado para el mensaje
+
   const handleAddToCart = async () => {
     try {
       // Enviar una solicitud POST al microservicio AddCart
@@ -12,10 +15,13 @@ export default function ProductCard({ product }) {
         product_id: product.id,
         quantity: 1, // Por defecto, agregar 1 unidad
       });
-      alert("Product add to cart");
+
+      // Mostrar mensaje personalizado
+      setMessage(`"${product.name}" (x1) ha sido agregado al carrito.`);
+      setTimeout(() => setMessage(""), 3000); // Ocultar mensaje después de 3 segundos
     } catch (error) {
-      console.error("Error to add cart:", error);
-      alert("there is a error to add the product into cart");
+      console.error("Error al agregar al carrito:", error);
+      setMessage("Hubo un error al agregar el producto al carrito.");
     }
   };
 
@@ -50,6 +56,12 @@ export default function ProductCard({ product }) {
           Add to Cart
         </button>
       </div>
+      {/* Mensaje de confirmación */}
+      {message && (
+        <div className="mt-4 p-2 bg-green-100 text-green-800 rounded-md">
+          {message}
+        </div>
+      )}
     </div>
   );
 }

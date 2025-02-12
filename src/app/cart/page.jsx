@@ -1,52 +1,108 @@
+// src/app/cart/page.jsx
 "use client";
-import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Link from "next/link";
+import API_ENDPOINTS from "../../config/apiEndpoints";
+import { useEffect, useState } from "react";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [total, setTotal] = useState(0);
 
   useEffect(() => {
-    const fetchCartItems = async () => {
+    const fetchCart = async () => {
       try {
-        const response = await axios.get("/api/cart"); // Endpoint ficticio
-        setCartItems(response.data);
-        setLoading(false);
+        const response = await axios.get(API_ENDPOINTS.GET_CART);
+        const items = Object.entries(response.data.items).map(([id, details]) => ({
+          id,
+          ...details,
+        }));
+        setCartItems(items);
+
+        // Calcular el total
+        const totalPrice = items.reduce((sum, item) => sum + item.quantity * parseFloat(item.price), 0);
+        setTotal(totalPrice);
       } catch (error) {
         console.error("Error al cargar el carrito:", error);
-        setLoading(false);
       }
     };
-    fetchCartItems();
+    fetchCart();
   }, []);
 
-  if (loading) return <p>Cargando carrito...</p>;
-  if (cartItems.length === 0) return <p>No hay productos en el carrito.</p>;
+  const handleUpdateQuantity = async (id, quantity) => {
+    try {
+      await axios.put(`${API_ENDPOINTS.UPDATE_CART}/${id}`, { quantity });
+      // Actualizar el estado local
+      setCartItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+      );
+    } catch (error) {
+      console.error("Error al actualizar la cantidad:", error);
+    }
+  };
+
+  const handleRemoveItem = async (id) => {
+    try {
+      await axios.delete(`${API_ENDPOINTS.REMOVE_CART}/${id}`);
+      // Actualizar el estado local
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+    }
+  };
 
   return (
     <div className="container mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-6">Carrito de Compras</h1>
-      <div className="space-y-4">
-        {cartItems.map((item) => (
-          <div key={item.id} className="flex justify-between items-center border p-4 rounded-md">
-            <div>
-              <h3 className="font-semibold">{item.name}</h3>
-              <p>${parseFloat(item.price).toFixed(2)}</p>
-            </div>
-            <div>
-              <p>Cantidad: {item.quantity}</p>
-            </div>
+      <h1 className="text-2xl font-bold mb-6">Tu Carrito</h1>
+      {cartItems.length === 0 ? (
+        <p>No hay productos en el carrito.</p>
+      ) : (
+        <div>
+          <table className="w-full border-collapse">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Cantidad</th>
+                <th>Precio Unitario</th>
+                <th>Total</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {cartItems.map((item) => (
+                <tr key={item.id}>
+                  <td>{item.name}</td>
+                  <td>
+                    <input
+                      type="number"
+                      value={item.quantity}
+                      onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
+                      className="w-16 border rounded px-2 py-1"
+                    />
+                  </td>
+                  <td>${parseFloat(item.price).toFixed(2)}</td>
+                  <td>${(item.quantity * parseFloat(item.price)).toFixed(2)}</td>
+                  <td>
+                    <button
+                      onClick={() => handleRemoveItem(item.id)}
+                      className="bg-red-500 text-white px-2 py-1 rounded"
+                    >
+                      Eliminar
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <div className="mt-6 flex justify-end">
+            <p className="text-xl font-bold">Total: ${total.toFixed(2)}</p>
           </div>
-        ))}
-      </div>
-      <div className="mt-6">
-        <Link href="/checkout">
-          <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
-            Proceder al Checkout
-          </button>
-        </Link>
-      </div>
+          <div className="mt-4 flex justify-end">
+            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+              Proceder al Pago
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
