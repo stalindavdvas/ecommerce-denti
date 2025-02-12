@@ -2,12 +2,13 @@
 "use client";
 import Link from "next/link";
 import axios from "axios";
+import API_ENDPOINTS from "../config/apiEndpoints";
 
 export default function ProductCard({ product }) {
   const handleAddToCart = async () => {
     try {
       // Enviar una solicitud POST al microservicio AddCart
-      await axios.post("http://localhost:8081/api/cart", {
+      await axios.post(API_ENDPOINTS.ADDCART, {
         product_id: product.id,
         quantity: 1, // Por defecto, agregar 1 unidad
       });
