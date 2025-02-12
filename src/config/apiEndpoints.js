@@ -1,10 +1,10 @@
 // src/config/apiEndpoints.js
 
 const API_ENDPOINTS = {
-    PRODUCTS: "http://52.70.251.25:5000/productos",
-    PRODUCTSID: "http://54.234.33.30:5000/products",
+    PRODUCTS: "http://3.91.195.5:5000/productos",
+    PRODUCTSID: "http://18.212.253.179:5000/products",
     CATEGORIES: process.env.NEXT_PUBLIC_CATEGORIES_API,
-    AUTH: "http://44.202.134.28:5000",
+    AUTH: "http://18.233.9.156:5000",
     ORDERS: process.env.NEXT_PUBLIC_ORDERS_API,
   };
   

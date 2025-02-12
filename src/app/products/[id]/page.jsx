@@ -27,6 +27,20 @@ export default function ProductDetail({ params }) {
     }
   }, [id]);
 
+  const handleAddToCart = async () => {
+    try {
+      // Enviar una solicitud POST al microservicio AddCart
+      await axios.post("http://localhost:8080/api/cart", {
+        product_id: product.id,
+        quantity: 1, // Por defecto, agregar 1 unidad
+      });
+      alert("Producto agregado al carrito");
+    } catch (error) {
+      console.error("Error al agregar al carrito:", error);
+      alert("Hubo un error al agregar el producto al carrito");
+    }
+  };
+
   if (loading) return <p>Cargando detalles del producto...</p>;
   if (!product) return <p>Producto no encontrado</p>;
 
@@ -49,12 +63,15 @@ export default function ProductDetail({ params }) {
           <h1 className="text-3xl font-bold mb-4">{product.name}</h1>
           <p className="text-gray-600 text-sm mb-4">Description: {product.description}</p>
           <p className="text-gray-600 text-sm mb-4">Stock: {product.stock}</p>
-          <p className="text-gray-800 text-2xl font-bold mb-6">Price: 
-            ${parseFloat(product.price).toFixed(2)}
+          <p className="text-gray-800 text-2xl font-bold mb-6">
+            Price: ${parseFloat(product.price).toFixed(2)}
           </p>
           {/* Botón de agregar al carrito */}
-          <button className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">
-           Add to Cart
+          <button
+            onClick={handleAddToCart}
+            className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700"
+          >
+            Add to Cart
           </button>
         </div>
       </div>

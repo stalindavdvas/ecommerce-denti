@@ -1,8 +1,23 @@
 // src/components/ProductCard.jsx
 "use client";
 import Link from "next/link";
+import axios from "axios";
 
 export default function ProductCard({ product }) {
+  const handleAddToCart = async () => {
+    try {
+      // Enviar una solicitud POST al microservicio AddCart
+      await axios.post("http://localhost:8081/api/cart", {
+        product_id: product.id,
+        quantity: 1, // Por defecto, agregar 1 unidad
+      });
+      alert("Product add to cart");
+    } catch (error) {
+      console.error("Error to add cart:", error);
+      alert("there is a error to add the product into cart");
+    }
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
       {/* Product Image */}
@@ -16,7 +31,7 @@ export default function ProductCard({ product }) {
       />
       {/* Product name */}
       <h3 className="text-lg font-semibold">{product.name}</h3>
-      {/* Oroduct Description */}
+      {/* Product Description */}
       <p className="text-gray-600 text-sm mb-2">{product.description}</p>
       {/* Product price */}
       <p className="text-gray-800 font-bold">${parseFloat(product.price).toFixed(2)}</p>
@@ -27,8 +42,11 @@ export default function ProductCard({ product }) {
             See Details
           </button>
         </Link>
-        <button className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-          Add Cart
+        <button
+          onClick={handleAddToCart}
+          className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700"
+        >
+          Add to Cart
         </button>
       </div>
     </div>
