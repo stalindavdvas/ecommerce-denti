@@ -1,4 +1,3 @@
-// src/app/cart/page.jsx
 "use client";
 import axios from "axios";
 import API_ENDPOINTS from "../../config/apiEndpoints";
@@ -7,48 +6,45 @@ import { useEffect, useState } from "react";
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
   const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchCart = async () => {
       try {
         const response = await axios.get(API_ENDPOINTS.GETCART);
+
+        // Verificar la estructura de la respuesta
+        if (!response.data || !response.data.items) {
+          throw new Error("La respuesta del servidor no tiene la estructura esperada.");
+        }
+
         const items = Object.entries(response.data.items).map(([id, details]) => ({
           id,
           ...details,
         }));
+
         setCartItems(items);
 
         // Calcular el total
-        const totalPrice = items.reduce((sum, item) => sum + item.quantity * parseFloat(item.price), 0);
+        const totalPrice = items.reduce(
+          (sum, item) => sum + item.quantity * parseFloat(item.price),
+          0
+        );
         setTotal(totalPrice);
-      } catch (error) {
-        console.error("Error al cargar el carrito:", error);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error al cargar el carrito:", err);
+        setError("Hubo un error al cargar el carrito. Por favor, inténtalo de nuevo.");
+        setLoading(false);
       }
     };
+
     fetchCart();
   }, []);
 
-  const handleUpdateQuantity = async (id, quantity) => {
-    try {
-      await axios.put(`${API_ENDPOINTS.UPDATE_CART}/${id}`, { quantity });
-      // Actualizar el estado local
-      setCartItems((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-      );
-    } catch (error) {
-      console.error("Error al actualizar la cantidad:", error);
-    }
-  };
-
-  const handleRemoveItem = async (id) => {
-    try {
-      await axios.delete(`${API_ENDPOINTS.REMOVE_CART}/${id}`);
-      // Actualizar el estado local
-      setCartItems((prev) => prev.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error("Error al eliminar el producto:", error);
-    }
-  };
+  if (loading) return <p>Cargando carrito...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="container mx-auto p-6">
@@ -75,7 +71,9 @@ export default function CartPage() {
                     <input
                       type="number"
                       value={item.quantity}
-                      onChange={(e) => handleUpdateQuantity(item.id, parseInt(e.target.value))}
+                      onChange={(e) =>
+                        handleUpdateQuantity(item.id, parseInt(e.target.value))
+                      }
                       className="w-16 border rounded px-2 py-1"
                     />
                   </td>
