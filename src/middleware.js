@@ -13,5 +13,5 @@ export async function middleware(request) {
 
 // Configura las rutas que deben ser protegidas
 export const config = {
-  matcher: ["/cart", "/profile"], // Agrega aquí las rutas protegidas
+  matcher: ["/profile"], // Agrega aquí las rutas protegidas
 };
