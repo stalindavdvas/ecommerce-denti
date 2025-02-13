@@ -11,7 +11,7 @@ export default function CartPage() {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.GET_CART);
+        const response = await axios.get(API_ENDPOINTS.GETCART);
         const items = Object.entries(response.data.items).map(([id, details]) => ({
           id,
           ...details,
