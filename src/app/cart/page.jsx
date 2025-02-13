@@ -13,23 +13,22 @@ export default function CartPage() {
     const fetchCart = async () => {
       try {
         const response = await axios.get(API_ENDPOINTS.GETCART);
-
+  
         // Imprimir la respuesta del servidor en la consola
         console.log("Respuesta del servidor:", response.data);
-
+  
         // Validar la estructura de la respuesta
         if (!response.data || typeof response.data.items !== "object") {
           throw new Error("La respuesta del servidor no tiene la estructura esperada.");
         }
-
-        // Convertir el objeto items en un array
+  
         const items = Object.entries(response.data.items).map(([id, details]) => ({
           id,
           ...details,
         }));
-
+  
         setCartItems(items);
-
+  
         // Calcular el total
         const totalPrice = items.reduce(
           (sum, item) => sum + item.quantity * parseFloat(item.price),
@@ -38,12 +37,12 @@ export default function CartPage() {
         setTotal(totalPrice);
         setLoading(false);
       } catch (err) {
-        console.error("Error al cargar el carrito:", err);
+        console.error("Error al cargar el carrito:", err.response ? err.response.data : err.message);
         setError("Hubo un error al cargar el carrito. Por favor, inténtalo de nuevo.");
         setLoading(false);
       }
     };
-
+  
     fetchCart();
   }, []);
 
