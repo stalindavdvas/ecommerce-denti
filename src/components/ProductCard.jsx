@@ -13,7 +13,9 @@ export default function ProductCard({ product }) {
       // Enviar una solicitud POST al microservicio AddCart
       await axios.post(API_ENDPOINTS.ADDCART, {
         product_id: product.id,
-        quantity: 1, // Por defecto, agregar 1 unidad
+        name: product.name, // Incluir el nombre del producto
+        quantity: 1,       // Por defecto, agregar 1 unidad
+        price: product.price, // Incluir el precio del producto
       });
 
       // Mostrar mensaje personalizado

@@ -32,9 +32,13 @@ export default function ProductDetail({ params }) {
       // Enviar una solicitud POST al microservicio AddCart
       await axios.post(API_ENDPOINTS.ADDCART, {
         product_id: product.id,
-        quantity: 1, // Por defecto, agregar 1 unidad
+        name: product.name, // Incluir el nombre del producto
+        quantity: 1,       // Por defecto, agregar 1 unidad
+        price: product.price, // Incluir el precio del producto
       });
-      alert("Producto agregado al carrito");
+
+      // Mostrar mensaje personalizado
+      alert(`"${product.name}" (x1) ha sido agregado al carrito.`);
     } catch (error) {
       console.error("Error al agregar al carrito:", error);
       alert("Hubo un error al agregar el producto al carrito");
