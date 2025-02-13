@@ -12,23 +12,31 @@ export default function CartPage() {
   useEffect(() => {
     const fetchCart = async () => {
       try {
-        const response = await axios.get(API_ENDPOINTS.GETCART);
-  
-        // Imprimir la respuesta del servidor en la consola
-        console.log("Respuesta del servidor:", response.data);
-  
+        // Imprimir la URL que se está utilizando
+        console.log("Haciendo solicitud a:", API_ENDPOINTS.GETCART);
+
+        const response = await axios.get(API_ENDPOINTS.GETCART, {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        // Imprimir la respuesta completa del servidor
+        console.log("Respuesta completa del servidor:", response);
+
         // Validar la estructura de la respuesta
         if (!response.data || typeof response.data.items !== "object") {
           throw new Error("La respuesta del servidor no tiene la estructura esperada.");
         }
-  
+
+        // Convertir los items del carrito a un array
         const items = Object.entries(response.data.items).map(([id, details]) => ({
           id,
           ...details,
         }));
-  
+
         setCartItems(items);
-  
+
         // Calcular el total
         const totalPrice = items.reduce(
           (sum, item) => sum + item.quantity * parseFloat(item.price),
@@ -42,7 +50,7 @@ export default function CartPage() {
         setLoading(false);
       }
     };
-  
+
     fetchCart();
   }, []);
 
