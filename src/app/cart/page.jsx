@@ -14,11 +14,15 @@ export default function CartPage() {
       try {
         const response = await axios.get(API_ENDPOINTS.GETCART);
 
-        // Verificar la estructura de la respuesta
-        if (!response.data || !response.data.items) {
+        // Imprimir la respuesta del servidor en la consola
+        console.log("Respuesta del servidor:", response.data);
+
+        // Validar la estructura de la respuesta
+        if (!response.data || typeof response.data.items !== "object") {
           throw new Error("La respuesta del servidor no tiene la estructura esperada.");
         }
 
+        // Convertir el objeto items en un array
         const items = Object.entries(response.data.items).map(([id, details]) => ({
           id,
           ...details,
@@ -42,6 +46,28 @@ export default function CartPage() {
 
     fetchCart();
   }, []);
+
+  const handleUpdateQuantity = async (id, quantity) => {
+    try {
+      await axios.put(`${API_ENDPOINTS.UPDATE_CART}/${id}`, { quantity });
+      // Actualizar el estado local
+      setCartItems((prev) =>
+        prev.map((item) => (item.id === id ? { ...item, quantity } : item))
+      );
+    } catch (error) {
+      console.error("Error al actualizar la cantidad:", error);
+    }
+  };
+
+  const handleRemoveItem = async (id) => {
+    try {
+      await axios.delete(`${API_ENDPOINTS.REMOVE_CART}/${id}`);
+      // Actualizar el estado local
+      setCartItems((prev) => prev.filter((item) => item.id !== id));
+    } catch (error) {
+      console.error("Error al eliminar el producto:", error);
+    }
+  };
 
   if (loading) return <p>Cargando carrito...</p>;
   if (error) return <p>{error}</p>;
