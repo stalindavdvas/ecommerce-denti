@@ -1,7 +1,7 @@
-"use client";
+// src/app/cart/page.js
+import { useEffect, useState } from "react";
 import axios from "axios";
 import API_ENDPOINTS from "../../config/apiEndpoints";
-import { useEffect, useState } from "react";
 
 export default function CartPage() {
   const [cartItems, setCartItems] = useState([]);
@@ -13,22 +13,23 @@ export default function CartPage() {
     const fetchCart = async () => {
       try {
         const response = await axios.get(API_ENDPOINTS.GETCART);
-  
+
         // Imprimir la respuesta del servidor en la consola
         console.log("Respuesta del servidor:", response.data);
-  
+
         // Validar la estructura de la respuesta
         if (!response.data || typeof response.data.items !== "object") {
           throw new Error("La respuesta del servidor no tiene la estructura esperada.");
         }
-  
+
+        // Convertir el objeto items en un array
         const items = Object.entries(response.data.items).map(([id, details]) => ({
           id,
           ...details,
         }));
-  
+
         setCartItems(items);
-  
+
         // Calcular el total
         const totalPrice = items.reduce(
           (sum, item) => sum + item.quantity * parseFloat(item.price),
@@ -42,31 +43,9 @@ export default function CartPage() {
         setLoading(false);
       }
     };
-  
+
     fetchCart();
   }, []);
-
-  const handleUpdateQuantity = async (id, quantity) => {
-    try {
-      await axios.put(`${API_ENDPOINTS.UPDATE_CART}/${id}`, { quantity });
-      // Actualizar el estado local
-      setCartItems((prev) =>
-        prev.map((item) => (item.id === id ? { ...item, quantity } : item))
-      );
-    } catch (error) {
-      console.error("Error al actualizar la cantidad:", error);
-    }
-  };
-
-  const handleRemoveItem = async (id) => {
-    try {
-      await axios.delete(`${API_ENDPOINTS.REMOVE_CART}/${id}`);
-      // Actualizar el estado local
-      setCartItems((prev) => prev.filter((item) => item.id !== id));
-    } catch (error) {
-      console.error("Error al eliminar el producto:", error);
-    }
-  };
 
   if (loading) return <p>Cargando carrito...</p>;
   if (error) return <p>{error}</p>;
@@ -85,33 +64,15 @@ export default function CartPage() {
                 <th>Cantidad</th>
                 <th>Precio Unitario</th>
                 <th>Total</th>
-                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
               {cartItems.map((item) => (
                 <tr key={item.id}>
                   <td>{item.name}</td>
-                  <td>
-                    <input
-                      type="number"
-                      value={item.quantity}
-                      onChange={(e) =>
-                        handleUpdateQuantity(item.id, parseInt(e.target.value))
-                      }
-                      className="w-16 border rounded px-2 py-1"
-                    />
-                  </td>
+                  <td>{item.quantity}</td>
                   <td>${parseFloat(item.price).toFixed(2)}</td>
                   <td>${(item.quantity * parseFloat(item.price)).toFixed(2)}</td>
-                  <td>
-                    <button
-                      onClick={() => handleRemoveItem(item.id)}
-                      className="bg-red-500 text-white px-2 py-1 rounded"
-                    >
-                      Eliminar
-                    </button>
-                  </td>
                 </tr>
               ))}
             </tbody>
