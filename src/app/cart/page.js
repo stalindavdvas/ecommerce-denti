@@ -1,4 +1,5 @@
 // src/app/cart/page.js
+"use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import API_ENDPOINTS from "../../config/apiEndpoints";
