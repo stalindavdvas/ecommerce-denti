@@ -55,7 +55,7 @@ export default function Header() {
             </>
           )}
           {/* Agregar el carrito */}
-          <Link href="/cart" className="relative hover:underline">
+          <Link href="../app/cart" className="relative hover:underline">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               className="h-6 w-6"
